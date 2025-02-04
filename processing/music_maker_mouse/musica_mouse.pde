@@ -12,9 +12,6 @@ int audioDuration = 0;
 
 SoundFile soundfile;
 
-// Define a variable to store the randomly generated background color in
-int backgroundColor[] = {255, 255, 255};
-
 void setup() {
   size(640, 360);
   background(255);
@@ -26,17 +23,18 @@ void setup() {
   println("SFSampleRate= " + soundfile.sampleRate() + " Hz");
   println("SFSamples= " + soundfile.frames() + " samples");
   println("SFDuration= " + soundfile.duration() + " seconds");
+  
+
 }      
 
-
 void draw() {
-  
-  createTimeLine();
-  fill(value);
   
   createButtons();
   
   jumpTimeLine();
+  
+  createTimeLine();
+  
 }
 
 void mouseClicked() {
@@ -69,28 +67,33 @@ void playAudio(){
     println("tocar áudio");
     soundfile.play(1);
     //arquivo_audio.rate(1);
+ 
+    fill(204, 102, 0);
   }
   else{
     println("pausar áudio");
     soundfile.pause();
     
     canJump = false;
+    
+    fill(255);
   }
 }
 
-void createTimeLine(){
+void createTimeLine(int musicChangedTime){
   
   audioDuration = int(soundfile.duration());
   
   if (audioDuration > 0 && soundfile.isPlaying()){
   
-    int x1 = int(640/audioDuration);
+    int musicProgressTime = int(640/audioDuration);
+    if (musicChangedTime > 0){
+      musicProgressTime = musicChangedTime;
+    }
     
     line(timeLine, 20, timeLine, 80);
     
-    //println("Tempo música = " + file.positionFrame());
-    
-    timeLine = timeLine + x1;
+    timeLine = timeLine + musicProgressTime;
     if (timeLine > 640) { 
       timeLine = 0; 
       soundfile.stop();
@@ -112,12 +115,13 @@ void jumpTimeLine(){
 }
 
 void createButtons(){
+  
   //x, y, sizeX, sizeY
   //play
-  rect(60, 220, 70, 70, 28); 
-  //echo
-  rect(180, 220, 70, 70, 28); 
-  //triangle(120, 100, 132, 80, 144, 100);
+  rect(60, 220, 70, 70, 28);  
+  triangle(72, 237, 95, 256, 73, 273);
+  line(105, 237, 105, 273);
+  line(115, 237, 115, 273);
 }
 
 void playEcho(){
@@ -133,16 +137,6 @@ void playEcho(){
     delay.time(0.5); 
     
     isEcho = true;
-  }
-  else{
-    // create a delay effect
-    delay = new Delay(this);
-
-    // Patch the delay
-    delay.process(soundfile, 5);
-    delay.time(0);  
-    
-    isEcho = false;
   }
 }
 
@@ -200,8 +194,6 @@ void keyPressed() {
 
   // If a new sample playback was triggered, change the background color
   if (validKey) {
-    for (int i = 0; i < 3; i++) {
-      backgroundColor[i] = int(random(255));
-    }
+
   }
 }
